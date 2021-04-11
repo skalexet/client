@@ -1,16 +1,16 @@
 <template>
   <div @click="editorOn" class="container__desc">
     <div>
-        <h6>Идентификатор: <div class="params">{{ params }}</div><small>...</small></h6>
-        <h6>Дата поступления: <div class="params"> ..required.. </div><span>ред.</span></h6>
-        <h6>Дата отгрузки:<div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Дата возврата: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Дата проверки: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Номенклатура: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Размер 1: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Размер 2: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Размер 3: <div class="params">..required.. </div><span>ред.</span></h6>
-        <h6>Масса: <div class="params">..required.. </div><span>ред.</span></h6>
+        <h6>Идентификатор: <div class="newParams">{{ params }}</div><small>...</small></h6>
+        <h6>Дата поступления: <div class="newParams"> ..required.. </div><span>ред.</span></h6>
+        <h6>Дата отгрузки:<div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Дата возврата: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Дата проверки: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Номенклатура: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Размер 1: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Размер 2: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Размер 3: <div class="newParams">..required.. </div><span>ред.</span></h6>
+        <h6>Масса: <div class="newParams">..required.. </div><span>ред.</span></h6>
     </div>
     <div>
         <input type="button" class="button" value="Сохранить новый" @click="onSubmit"/>
@@ -74,24 +74,24 @@ export default {
       },
 
       onSubmit() {
-        const collection = document.querySelectorAll(".params");
+        const collection = document.querySelectorAll(".newParams");
         const object = this.createObject();
-        
+  
         let i = 0;
          
         for (let key in object) {
-          object[key] = collection[i].textContent;
+          object[key] = collection[i].innerText;
              
           i++;
         }
-
+        console.log(object);
         this.serve(object);
       },
 
       serve(object) {
         axios.put(`http://test.i-mex.pro/api/barcodes/${object.barcode}`)
         .then(res => console.log('Well done!'+ ' ' + res.status))
-        .catch(err => console.log('Not found...'))
+        .catch(err => console.log('Not found...'));
       }
        
     },

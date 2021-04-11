@@ -2,23 +2,24 @@
   <div @click="editorOn" class="container__desc">
     <div class="notification" hidden>
       <h4>О Т Г Р У Ж Е Н О</h4>
+      <span class="timing" hidden>Более пяти часов назад...</span>
       <button class="button" @click="$router.go()">Вернуть</button>
       <button class="button" @click="$router.go()">Отмена</button>
     </div>
     <div class="form">
       <h6>Идентификатор: 
-        <div class="params1">{{ params.barcode }}</div>
+        <div class="params">{{ params.barcode }}</div>
         <small class="">...</small>
       </h6>
-      <h6>Дата поступления: <div class="params1">{{ params.date_in }}</div><span>ред.</span></h6>
-      <h6>Дата отгрузки:<div id='out' class="params1"> {{ params.date_out }}</div><span>ред.</span></h6>
-      <h6>Дата возврата: <div class="params1">{{ params.date_revert }}</div><span>ред.</span></h6>
-      <h6>Дата проверки: <div class="params1">{{ params.date_check }}</div><span>ред.</span></h6>
-      <h6>Номенклатура: <div class="params1">{{ params.classifier }}</div><span>ред.</span></h6>
-      <h6>Размер 1: <div class="params1">{{ params.size_1 }}</div><small>...</small></h6>
-      <h6>Размер 2: <div class="params1">{{ params.size_2 }}</div><small>...</small></h6>
-      <h6>Размер 3: <div class="params1">{{ params.size_3 }}</div><small>...</small></h6>
-      <h6>Масса: <div class="params1">{{ params.mass }} </div><span>ред.</span></h6>
+      <h6>Дата поступления: <div class="params">{{ params.date_in }}</div><span>ред.</span></h6>
+      <h6>Дата отгрузки:<div id='out' class="params"> {{ params.date_out }}</div><span>ред.</span></h6>
+      <h6>Дата возврата: <div class="params">{{ params.date_revert }}</div><span>ред.</span></h6>
+      <h6>Дата проверки: <div class="params">{{ params.date_check }}</div><span>ред.</span></h6>
+      <h6>Номенклатура: <div class="params">{{ params.classifier }}</div><span>ред.</span></h6>
+      <h6>Размер 1: <div class="params">{{ params.size_1 }}</div><small>...</small></h6>
+      <h6>Размер 2: <div class="params">{{ params.size_2 }}</div><small>...</small></h6>
+      <h6>Размер 3: <div class="params">{{ params.size_3 }}</div><small>...</small></h6>
+      <h6>Масса: <div class="params">{{ params.mass }} </div><span>ред.</span></h6>
       <input type="button" class="button" value="Сохранить изменения" @click="onSubmit"/>
       <input type="button" class="button" value="Отмена" @click="$router.go()"/>
     </div>
@@ -80,7 +81,7 @@ export default {
       },
 
       onSubmit() {
-        const collection = document.querySelectorAll(".params1");
+        const collection = document.querySelectorAll(".params");
         const object = this.createObject();
         
         let i = 0;
@@ -98,28 +99,45 @@ export default {
         axios.patch(`http://test.i-mex.pro/api/barcodes/${object.barcode}`)
         .then(res => console.log('Well done'+' '+res.status))
         .catch(err => console.log('Not found'))
-      }
-       
-    },
+      },
 
-    data() {
-      return {
-         
-      }
-    },
+      showTimeMessage() {
+        // const not = document.querySelector('.notification');
+        // const form = document.querySelector('.form');              NOT TESTED YET
+        // not.hidden = false;
+        // form.style.pointerEvents = "none";
+        // form.style.opacity = "0.55";
+        
+        // const year = dateOut.substring(0, 3);
+        // const month = dateOut.substring(5, 6);
+        // const date = dateOut.substring(8, 9);
+        // const hour = dateOut.substring(11, 12);
+        // const minute = dateOut.substring(14, 15);
+        // const second = dateOut.substring(17, 18);
 
+        // const prevDate = new Date(year, month, date, hour, minute, second);
+
+        // const nowDate = new Date();
+
+        // if (nowDate.getTime() - prevDate.getTime() > 18000) {
+        //   const timeMessage = document.querySelector('.timing'); 
+        //   timeMessage.hidden = false;
+        }
+    },
 
     mounted() {
-      const dataOut = document.querySelector('#out');
-      if (dataOut.innerHTML !== "" || dataOut.innerHTML !== null) {
-        const not = document.querySelector('.notification');
-        const form = document.querySelector('.form');
-        not.hidden = false;
-        form.style.pointerEvents = "none";
-        form.style.opacity = "0.55";
-        console.log(dataOut)
+      const element = document.querySelectorAll('#out');
+      const dateOut = element[0].innerText;
+
+      if (dateOut !== "" && 
+          dateOut !== null &&
+          dateOut !== "..required.."
+          ) {
+
+            this.showTimeMessage();
+        }
       }
-    }
+    
 }
 
 </script>
@@ -136,6 +154,10 @@ export default {
   word-spacing: 1px;
   letter-spacing: 0.5px;
   min-width: 700px;
+}
+
+.timing {
+  color: red;
 }
 
 .container__desc h6 {

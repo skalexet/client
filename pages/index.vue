@@ -55,6 +55,7 @@ export default {
               return;
             } else {
               alert('Error: ', error);
+              return;
             }
           });
     },
