@@ -130,4 +130,32 @@ form input:nth-child(2) {
 .links {
   padding-top: 15px;
 }
+
+@media screen and (max-width: 700px) {
+  .title {
+    font-weight: 200;
+    font-size: 60px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .title {
+    font-weight: 100;
+    font-size: 40px;
+  }
+
+  form input:nth-child(1) {
+    font-weight: 100;
+    font-size: 16px;
+    color: #526488;
+    word-spacing: 5px;
+    padding: 9px 0;
+  }
+
+  form input:nth-child(2) {
+    font-weight: 100;
+    font-size: 16px;
+  }
+}
+
 </style>

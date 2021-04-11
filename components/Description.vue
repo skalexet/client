@@ -207,5 +207,20 @@ export default {
 .notification h4 {
   color: white;
 }
+
+@media screen and (max-width: 700px) {
+   .button {
+    font-weight: 100;
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+
+  .button {
+    font-weight: 100;
+    font-size: 16px;
+  }
+}
  
 </style>
