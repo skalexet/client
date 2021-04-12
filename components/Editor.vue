@@ -1,12 +1,14 @@
 <template>
   <div class="container__editor">
-       <select name="selector">
-        <option value="14">Труба прямошовная</option>
+      <label>Классификатор</label>
+       <select class="selector" name="selector" @change="setClassifierId">
+        <option value="14" selected="selected">Труба прямошовная</option>
         <option value="15">Труба спиралешовная</option>
        </select>
      <div class="grid-classifier-params">
 
        <strong>Калькулятор массы:</strong><br />
+
         <!-- <template
           v-for="(param, index) of selectedClassifier.array_params_all"
           v-if="selectedNormativDoc"  
@@ -40,18 +42,20 @@
         </div> -->
       </div>
 
-    <input type="button" value="сохранить" class="button" @click="save"/> 
-    <input type="button" value="исправить" class="button" @click="treat"/> 
+    <input type="button" value="сохранить" class="button" id="saveBtn" @click="save" hidden/> 
+    <input type="button" value="исправить" class="button" id="treatBtn" @click="treat" /> 
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
     name: 'Editor',
 
     data() {
       return {
-        selectedClassifier: this.$router.params.props,
+
       }
     },
 
@@ -66,10 +70,17 @@ export default {
         return object;
       },
 
-      save() {
-        const json = JSON.stringify(this.createObject());
+      setClassifierId() {
+        const selector = document.querySelector('.selector');
+        return selector.value;
+      },
+
+      async save() {
+        const object = this.createObject();
+        object.classifier_id = this.setClassifierId();
+        const json = JSON.stringify(object);
         console.log(json);
-        axios.post(`http://test.i-mex.pro/api/barcodes/${this.$router.params.props.barcode}`, json)
+        await axios.post(`http://test.i-mex.pro/api/barcodes`, json, {})
         .then(response => console.log('ok'))
         .catch(error => {
           if (error.response.status == 400) {
@@ -80,10 +91,8 @@ export default {
         });
       },
 
-      treat() {
-        axios.patch(`http://test.i-mex.pro/api/barcodes/${this.$router.params.props.barcode}`, {
-
-        })
+      async treat() {
+        axios.patch(`http://test.i-mex.pro/api/barcodes/`, this.$router.params.props)
         .then(response => console.log('ok'))
         .catch(error => {
           if (error.response.status == 405) {
@@ -92,6 +101,20 @@ export default {
             console.log(error);
           }
         });
+      },
+
+      showSaveButton() {
+        const saveBtn = document.querySelector('#saveBtn');
+        const treatBtn = document.querySelector('#treatBtn');
+
+        saveBtn.hidden = false;
+        treatBtn.hidden = true;
+      }
+    },
+
+    mounted() {
+      if (!this.$router.params.props.date_in) {
+        this.showSaveButton();
       }
     }
 }

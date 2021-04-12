@@ -16,11 +16,6 @@
 import axios from "axios";
 
 export default {
-  components: {
-     
-  },
- 
-
   methods: {
     
     onSubmit(id) {
@@ -41,7 +36,10 @@ export default {
             this.$router.push({
               name: 'Home',
             });
-            this.$router.params = id.target[0].value;
+            this.$router.params = {};
+            this.$router.params.props = {
+              barcode: id.target[0].value
+            };            
             console.log('такой штрих-код не найден в системе');
             return;
           } else if (error.response.status == 503) {

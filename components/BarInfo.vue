@@ -1,12 +1,5 @@
 <template>
   <div class="container">
-
-    <!-- <div class="notification" hidden>
-      <h4>О Т Г Р У Ж Е Н О</h4>
-      <span class="timing" hidden>Более пяти часов назад...</span>
-      <button class="button" @click="$router.go()">Вернуть</button>
-      <button class="button" @click="$router.go()">Отмена</button>
-    </div> -->
     <div class="editor" hidden>
         <Editor />
     </div>
@@ -103,7 +96,7 @@ export default {
               date_check: nowDate
             })
             .then(response => {
-                console.log(`Date of "date_check" is updated`);
+                console.log(`ok`);
             })
             .catch(err => console.log(error));
         },
@@ -115,7 +108,7 @@ export default {
               date_out: nowDate
             })
             .then(response => {
-                console.log('Date of "date_out" is setted');
+                console.log('ok');
             })
             .catch(err => console.log(error));
         },
@@ -127,14 +120,16 @@ export default {
               date_revert: nowDate
             })
             .then(response => {
-                console.log('Date of "date_revert" is setted');
+                console.log('ok');
             })
             .catch(err => console.log(error));
         }
     },
 
     mounted() {
-        console.log(this.$router.params.props);
+        if (!this.$router.params.props.date_in) {
+          this.edit();
+        }
     }
 
 }

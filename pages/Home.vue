@@ -8,9 +8,7 @@
       <button class="button" @click="$router.go()">Отмена</button>
     </div> -->
  
-    <keep-alive>
-        <component :is="component"></component>
-    </keep-alive>
+    <BarInfo />
      
   </div>
 </template>
@@ -33,17 +31,17 @@ export default {
     },
 
     data() {
-        this.$router.params.component = this.component;
-        console.log(this.$router.params, this.component);
+        // this.$router.params.component = this.component;
+        // console.log(this.$router.params, this.component);
 
         return {
-            component: this.$router.params.status === 404 ? 'Editor' : 'BarInfo'
+            // component: this.$router.params.status === 404 ? 'Editor' : 'BarInfo'
         } 
     },
 
     mounted() {
-        this.$router.params.component = this.component;
-        console.log(this.$router.params.component);
+        // this.$router.params.component = this.component;
+        // console.log(this.$router.params.component);
         // if (this.$router.params.status === 200) {
         //     this.component = BarInfo;
         // } else if (this.$router.params.status === 404) {
