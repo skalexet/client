@@ -1,77 +1,56 @@
 <template>
   <div class="container">
     <div class="title">
-      <div class="start">
-        <h6>ОТСКАНИРУЙТЕ ШТРИХ-КОД</h6>
-        <form @submit.prevent="onSubmit">
-            <input type="text" name="id" value="" placeholder="ввести значение вручную">
-            <input type="submit" value="Поиск">
-        </form>
-      </div>
+      
+      <h6>ОТСКАНИРУЙТЕ ШТРИХ-КОД</h6>
+      <form @submit.prevent="onSubmit">
+          <input type="text" name="id" value="" placeholder="ввести barcode вручную">
+          <input type="submit" value="Поиск">
+      </form>
 
-      <div class="description" hidden>
-        <Description :params="props"/>
-      </div>
-      <div class="creator" hidden>
-        <Creator :params="props" />
-      </div>
     </div>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import Description from '../components/Description';
-import Creator from '../components/Creator';
 
 export default {
   components: {
-    Description,
-    Creator
+     
   },
-
-  data() {
-    return {
-      props: {}
-    }
-  },
+ 
 
   methods: {
     
-    async onSubmit(id) {
-        axios.get(`http://test.i-mex.pro/api/barcodes/${id.target[0].value}`)
-          .then(response => {
-              console.log(response.status)
-              this.props = response.data;
-              this.openUpTheDesc(this.props);
-          })
-          .catch(error => {
-            if (error.response.status == 404) {
-              this.props = id.target[0].value;
-              this.openUpTheCreator();
-              return;
-            } else if (error.response.status == 503) {
-              console.error(error.message, 'Server is not avaliable');
-              return;
-            } else {
-              alert('Error: ', error);
-              return;
-            }
-          });
-    },
-
-    openUpTheDesc(res) {
-      const start = document.querySelector('.start');
-      const comp = document.querySelector('.description');
-      start.hidden = true;
-      comp.hidden = false;
-    },
-
-    openUpTheCreator() {
-      const start = document.querySelector('.start');
-      const comp = document.querySelector('.creator');
-      start.hidden = true;
-      comp.hidden = false;
+    onSubmit(id) {
+      axios.get(`http://test.i-mex.pro/api/barcodes/${id.target[0].value}`)
+        .then(response => {
+            console.log(response.status)
+              
+            this.$router.push({
+              name: 'Home',
+            });
+            this.$router.params = {
+              props: response.data, 
+              status: response.status
+            };
+        })
+        .catch(error => {
+          if (error.response.status === 404) {
+            this.$router.push({
+              name: 'Home',
+            });
+            this.$router.params = id.target[0].value;
+            console.log('такой штрих-код не найден в системе');
+            return;
+          } else if (error.response.status == 503) {
+            console.error('Ошибка на сервере при обработке запроса');
+            return;
+          } else {
+            return;
+          }
+        });
     }
   }
 }
