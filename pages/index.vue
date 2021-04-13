@@ -70,7 +70,6 @@ body {
 
 .container {
   margin: 0 auto;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -78,7 +77,6 @@ body {
 }
 
 .title {
-   
   display: block;
   font-weight: 300;
   font-size: 100px;

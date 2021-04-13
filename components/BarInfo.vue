@@ -5,7 +5,6 @@
     </div>
     <div class="barInfo">
       <h6>Идентификатор: <span class="params">{{ this.$router.params.props.barcode }}</span></h6>
-      
       <h6>Дата поступления: <span class="params">{{ this.$router.params.props.date_in }}</span></h6>
       <h6>Дата отгрузки:<span id='out' class="params"> {{ this.$router.params.props.date_out }}</span></h6>
       <h6>Дата возврата: <span class="params">{{ this.$router.params.props.date_revert }}</span></h6>

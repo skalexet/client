@@ -5,9 +5,31 @@
         <option value="14" selected="selected">Труба прямошовная</option>
         <option value="15">Труба спиралешовная</option>
        </select>
-     <div class="grid-classifier-params">
-
+     
+     <!-- // Calculator -->
+     <div class="grid-classifier-params"
+      v-if="selectedNormativDoc"
+     >
        <strong>Калькулятор массы:</strong><br />
+        <template
+          v-for="(param, index) of selectedClassifier.array_params_all"
+        >
+          <div :key="param.name">
+            <label>
+              {{ param.name }} = 
+                <!-- v-model="calcParams[index].value === '' ? "func" : calcParams[index].value"
+                -->
+              <input 
+                :placeholder="'parameter'"
+                class="calc-input"
+                type="text" 
+              /> {{ param.unit }}
+            </label>
+          </div>
+        </template>
+
+     <!-- -->
+
 
         <!-- <template
           v-for="(param, index) of selectedClassifier.array_params_all"
@@ -55,17 +77,45 @@ export default {
 
     data() {
       return {
-
+        selectedNormativDoc: true,
+                                      // hardcode to change   
+        selectedClassifier: {
+          array_params_all: [        //
+            {
+              name: "толщина",
+              unit: "мм",
+            },
+            {                  //
+              name: "ширина",
+              unit: "мм",
+            },
+            {                  //
+              name: "длинна",
+              unit: "мм",
+            }]                          //
+        },
+        calcParams: []
       }
     },
 
     methods: {
+      fillCalcParams() {
+        let i;
+        while (i < 4) {
+          this.calcParams.push({ value: i * 101 });
+        }
+      },
       createObject() {
         const object = {
           barcode: this.$router.params.props.barcode,
-          classifier_id: '',
+          date_in: this.setDateIn(),
+          classifier_id: this.setClassifierId(),
           mass: '',
-          params_value: [],
+          params_value: [
+            { param_id: 12, value: 1420},
+            { param_id: 13, value: 20},
+            { param_id: 14, value: 9450}
+          ],
         };
         return object;
       },
@@ -75,9 +125,26 @@ export default {
         return selector.value;
       },
 
+      setSelectedClassifier() {
+        const sizes = []
+        this.selectedClassifier.array_params_all.forEach((el) => {
+            const item = {
+              name: el.name,
+              unit: el.unit,
+              values: [],
+            }
+            sizes.push(item)
+          })
+      },
+
+      setDateIn() {
+        const jsFormat = new Date();
+        const sqlFormat = `${jsFormat.getFullYear()}-${jsFormat.getMonth()}-${jsFormat.getDate()}T${jsFormat.getHours()}:${jsFormat.getMinutes()}:${jsFormat.getSeconds()}.000Z`; 
+        return sqlFormat;
+      },
+
       async save() {
         const object = this.createObject();
-        object.classifier_id = this.setClassifierId();
         const json = JSON.stringify(object);
         console.log(json);
         await axios.post(`http://test.i-mex.pro/api/barcodes`, json, {})
@@ -116,6 +183,8 @@ export default {
       if (!this.$router.params.props.date_in) {
         this.showSaveButton();
       }
+
+      this.fillCalcParams();
     }
 }
 </script>
@@ -136,6 +205,17 @@ export default {
 
 .grid-classifier-params {
   grid-area: grid-classifier-params;
+   
+}
+
+.grid-classifier-params template {
+  grid-area: grid-classifier-params;
+  display: flex;
+  flex-direction: column;
+}
+
+.calc-input {
+  width: 120px;
 }
 
 .button {
