@@ -54,84 +54,19 @@ export default {
 
 <style>
 
-/* .container {
+body {
   margin: 0;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-weight: 100;
-  font-size: 20px;
-  word-spacing: 1px;
-  letter-spacing: 0.5px;
-  min-width: 700px;
 }
 
-.timing {
-  color: red;
-}
-
-.container h6 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  cursor: default;
-}
-
-.container input {
-  margin: 0 0;
-}
-
-.container div {
-  margin: 0.15em 0;
-}
-
-.container span {
-  margin: 0.15em 0;
-  font-weight: lighter;
-  cursor: pointer;
-}
-
-.button {
-  font-weight: 100;
-  font-size: 18px;
-  color: #F1F1F1;
-  word-spacing: 5px;
-  padding: 0.18em 0.2em;
-  order: 2;
-  background-color: #35495e;
-  max-width: 30%;
-  border-radius: 5%;
-  outline: none;
-  cursor: pointer;
-}
-
-.notification {
-  background-color: black;
-  width: 40%;
-  height: 35%;
-  position: fixed;
-  text-align: center;
+@media screen and (max-width: 667px) {
+  .container {
+      max-width: 667px;
+      min-width: 300px;
+  }
   
-}
-
-.notification h4 {
-  color: white;
-}
-
-@media screen and (max-width: 700px) {
-   .button {
-    font-weight: 100;
-    font-size: 16px;
+  .title {
+    font-weight: 200;
+    font-size: 60px;
   }
 }
-
-@media screen and (max-width: 400px) {
-
-  .button {
-    font-weight: 100;
-    font-size: 16px;
-  }
-} */
-
 </style>

@@ -55,16 +55,7 @@ export default {
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
+body {
   font-family:
     'Quicksand',
     'Source Sans Pro',
@@ -75,6 +66,19 @@ export default {
     'Helvetica Neue',
     Arial,
     sans-serif;
+}
+
+.container {
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.title {
+   
   display: block;
   font-weight: 300;
   font-size: 100px;
@@ -104,18 +108,31 @@ form input:nth-child(2) {
   cursor: pointer;
 }
 
-.links {
-  padding-top: 15px;
-}
-
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 667px) {
+  .container {
+      max-width: 667px;
+      min-width: 300px;
+  }
+  
   .title {
     font-weight: 200;
     font-size: 60px;
   }
 }
 
+/* @media screen and (max-width: 700px; min-width: 350px;) {
+  .title {
+    font-weight: 200;
+    font-size: 60px;
+  }
+} */
+
 @media screen and (max-width: 400px) {
+  .container {
+      max-width: 667px;
+      min-width: 300px;
+  }
+
   .title {
     font-weight: 100;
     font-size: 40px;
@@ -132,6 +149,11 @@ form input:nth-child(2) {
   form input:nth-child(2) {
     font-weight: 100;
     font-size: 16px;
+  }
+
+  .button {
+        font-weight: 200;
+        font-size: 16px;
   }
 }
 

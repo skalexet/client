@@ -214,14 +214,5 @@ export default {
   }
 }
 
-@media screen and (max-width: 400px) {
-    .container {
-        max-width: 373px;
-    }
-
-    .button {
-        font-weight: 200;
-        font-size: 16px;
-    }
-}
+ 
 </style>
