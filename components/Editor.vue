@@ -1,11 +1,15 @@
 <template>
-  <div class="container__editor">
-      <label>Классификатор</label>
-       <select class="selector" name="selector" @change="setClassifierId">
-        <option value="14" selected="selected">Труба прямошовная</option>
+  
+    <div class="container">
+      <div>
+      <strong>Класс товара</strong><br>
+       <select class="classifier" @change="setClassifierId">
+         <option value="0" selected="selected">Не выбрано</option>
+        <option value="14" >Труба прямошовная</option>
         <option value="15">Труба спиралешовная</option>
        </select>
-     
+      </div>
+
      <!-- // Calculator -->
      <div class="grid-classifier-params"
       v-if="selectedNormativDoc"
@@ -19,123 +23,123 @@
               {{ param.name }} = 
                 <!-- v-model="calcParams[index].value === '' ? "func" : calcParams[index].value"
                 -->
-              <input 
+              <input
                 :placeholder="'parameter'"
                 class="calc-input"
                 type="text" 
+                value=""
               /> {{ param.unit }}
             </label>
           </div>
         </template>
 
-     <!-- -->
-
-
-        <!-- <template
-          v-for="(param, index) of selectedClassifier.array_params_all"
-          v-if="selectedNormativDoc"  
-        >
-         <label>
-            {{ param.name }} =
-             <input
-              v-model="
-                calcParams[index].value === ''
-                  ? calcInputValue(selectedNormativDoc.array_params, index)
-                  : calcParams[index].value
-              " 
-              type="text"
-              class="calc-input"
-              :placeholder="
-                calcInputValue(selectedNormativDoc.array_params, index)
-              "
-              :name="calcInputName(selectedClassifier.array_params_all, index)"
-              @change="calculate(i)"
-            />
-            {{ param.unit }} 
-          </label>
-        </template> -->
-
-        <!-- <div v-for="(item, i) of selectedMassEval">
+        <div class="units">
           <br />
-          <strong>Единица измерения:</strong> {{ item.unit }} <br />
-          Расчетная масса = {{ calculate(i) }} кг/{{ item.unit }} <br />
-          Формула = {{ item.mass_eval }}<br />
+          <strong>Единица измерения:</strong> {{ "мм" }} <br />
+          Расчетная масса = {{ 500 }} кг/{{ "mm" }} <br />
+          Формула = {{ 'Formula*Formula' }} <br />
           <hr />
-        </div> -->
-      </div>
+        </div>
+       
 
+      </div>
     <input type="button" value="сохранить" class="button" id="saveBtn" @click="save" hidden/> 
     <input type="button" value="исправить" class="button" id="treatBtn" @click="treat" /> 
-  </div>
+    </div>
+ 
 </template>
 
 <script>
 import axios from 'axios'
+import qs from 'qs';
 
 export default {
     name: 'Editor',
 
     data() {
       return {
-        selectedNormativDoc: true,
-                                      // hardcode to change   
-        selectedClassifier: {
-          array_params_all: [        //
-            {
-              name: "толщина",
-              unit: "мм",
-            },
-            {                  //
-              name: "ширина",
-              unit: "мм",
-            },
-            {                  //
-              name: "длинна",
-              unit: "мм",
-            }]                          //
-        },
+        unitObject: '',
+        selectedNormativDoc: true, 
+        selectedClassifierId: '',
+        selectedClassifier: '',
         calcParams: []
       }
     },
 
     methods: {
+      
+
       fillCalcParams() {
         let i;
         while (i < 4) {
           this.calcParams.push({ value: i * 101 });
         }
       },
+
       createObject() {
         const object = {
           barcode: this.$router.params.props.barcode,
           date_in: this.setDateIn(),
-          classifier_id: this.setClassifierId(),
+          date_out: '',
+          date_revert: '',
+          date_check: '',
+          classifier: '',
+          classifier_id: '',
           mass: '',
-          params_value: [
-            { param_id: 12, value: 1420},
-            { param_id: 13, value: 20},
-            { param_id: 14, value: 9450}
-          ],
+          params_value: [],
         };
+        
         return object;
       },
 
-      setClassifierId() {
-        const selector = document.querySelector('.selector');
-        return selector.value;
+      setClassifierParams(id) {
+        console.log(id);
+        if (id == 14) {
+          this.selectedClassifier = {                            // hard code for a while
+            array_params_all: [{ id: 12, name: "диаметр трубы", unit: 'мм', value: ''},
+            { id: 13, name: "толщина стенки", unit: 'мм', value: ''},
+            { id: 14, name: "длина", unit: 'мм', value: ''}]
+          } 
+        } else {
+          console.log('hi');
+          this.selectedClassifier = {};
+        }
       },
 
-      setSelectedClassifier() {
-        const sizes = []
-        this.selectedClassifier.array_params_all.forEach((el) => {
-            const item = {
-              name: el.name,
-              unit: el.unit,
-              values: [],
-            }
-            sizes.push(item)
-          })
+      setClassifier(id) {
+        switch (id) {
+          case '14':                                             // hard code for a while
+            this.unitObject.classifier = "Труба прямошовная";
+            break;
+          case '15': 
+            this.unitObject.classifier = "Труба спиралешовная";
+            break;
+          default:
+            break;
+        };
+
+        this.setClassifierParams(id);
       },
+
+      setClassifierId() {
+        const classifier = document.querySelector('.classifier');
+        this.unitObject.classifier_id = classifier.value;
+        this.setClassifier(classifier.value);
+      },
+
+      // setSelectedClassifier() {
+      //   const sizes = [];
+
+      //   this.selectedClassifier.arrayParamsAll.forEach((el) => {
+      //       const item = {
+      //         name: el.name,
+      //         unit: el.unit,
+      //         values: [],
+      //       };
+
+      //       sizes.push(item)
+      //     })
+      // },
 
       setDateIn() {
         const jsFormat = new Date();
@@ -143,11 +147,12 @@ export default {
         return sqlFormat;
       },
 
-      async save() {
-        const object = this.createObject();
-        const json = JSON.stringify(object);
+      save() {
+        
+        const json = JSON.stringify(this.unitObject);
         console.log(json);
-        await axios.post(`http://test.i-mex.pro/api/barcodes`, json, {})
+
+        axios.post(`http://test.i-mex.pro/api/barcodes`, json)
         .then(response => console.log('ok'))
         .catch(error => {
           if (error.response.status == 400) {
@@ -159,14 +164,14 @@ export default {
       },
 
       async treat() {
-        axios.patch(`http://test.i-mex.pro/api/barcodes/`, this.$router.params.props)
+        const object = this.$router.params.props;
+        const json = JSON.stringify(object);
+        const id = this.$router.params.props.barcode;
+        console.log(id, json);
+        axios.patch(`http://test.i-mex.pro/api/barcodes/${id}`, json)
         .then(response => console.log('ok'))
         .catch(error => {
-          if (error.response.status == 405) {
-            console.log('параметры не указаны');
-          } else {
-            console.log(error);
-          }
+              if (error.response.status === 404) console.log('такой штрих-код не найден в системе');
         });
       },
 
@@ -180,17 +185,36 @@ export default {
     },
 
     mounted() {
-      if (!this.$router.params.props.date_in) {
+      const props = this.$router.params.props;
+      if (!props.date_in) {
         this.showSaveButton();
       }
+      // console.log(this.unitObject);
+      // this.fillCalcParams();
+      
+      if (props.classifier_id != '') {
+        const classifier = document.querySelector('.classifier');
+        const options = classifier.options;
+        
+        for (let i = 0; i < options.length; i++) {
+          console.log(options[i], props.classifier_id);
+          if (options[i].value == props.classifier_id) {
+            classifier.selectedIndex = i;
+            this.setClassifierParams(props.classifier_id);
+          }
 
-      this.fillCalcParams();
+          this.unitObject = props;
+        }
+      } else {
+        this.unitObject = this.createObject();
+      }
+      
     }
 }
 </script>
 
 <style>
-.container__editor {
+/* .container__editor {
   margin: 0;
   min-height: 100vh;
    
@@ -201,6 +225,10 @@ export default {
   word-spacing: 1px;
   letter-spacing: 0.5px;
   min-width: 700px;
+} */
+
+.units {
+
 }
 
 .grid-classifier-params {
@@ -208,19 +236,13 @@ export default {
    
 }
 
-.grid-classifier-params template {
-  grid-area: grid-classifier-params;
-  display: flex;
-  flex-direction: column;
-}
-
 .calc-input {
   width: 120px;
 }
 
 .button {
-  font-weight: 100;
-  font-size: 18px;
+  font-weight: 200;
+  font-size: 21px;
   color: #F1F1F1;
   word-spacing: 5px;
   padding: 0.18em 0.2em;

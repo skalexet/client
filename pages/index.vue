@@ -22,7 +22,7 @@ export default {
       axios.get(`http://test.i-mex.pro/api/barcodes/${id.target[0].value}`)
         .then(response => {
             console.log(response.status)
-              
+            
             this.$router.push({
               name: 'Home',
             });
@@ -30,6 +30,7 @@ export default {
               props: response.data, 
               status: response.status
             };
+            console.log(this.$router.params.props);
         })
         .catch(error => {
           if (error.response.status === 404) {
@@ -125,7 +126,7 @@ form input:nth-child(2) {
   }
 } */
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 440px) {
   .container {
       max-width: 667px;
       min-width: 300px;

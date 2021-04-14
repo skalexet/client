@@ -1,19 +1,21 @@
 <template>
   <div class="container">
+    
     <div class="editor" hidden>
         <Editor />
     </div>
+
     <div class="barInfo">
-      <h6>Идентификатор: <span class="params">{{ this.$router.params.props.barcode }}</span></h6>
-      <h6>Дата поступления: <span class="params">{{ this.$router.params.props.date_in }}</span></h6>
-      <h6>Дата отгрузки:<span id='out' class="params"> {{ this.$router.params.props.date_out }}</span></h6>
-      <h6>Дата возврата: <span class="params">{{ this.$router.params.props.date_revert }}</span></h6>
-      <h6>Дата проверки: <span class="params">{{ this.$router.params.props.date_check }}</span></h6>
-      <h6>Номенклатура: <span class="params">{{ this.$router.params.props.classifier }}</span></h6>
-      <h6>Размер 1: <span class="params">{{ this.$router.params.props.size_1 }}</span></h6>
-      <h6>Размер 2: <span class="params">{{ this.$router.params.props.size_2 }}</span></h6>
-      <h6>Размер 3: <span class="params">{{ this.$router.params.props.size_3 }}</span></h6>
-      <h6>Масса: <span class="params">{{ this.$router.params.props.mass }} </span></h6>
+
+      <div v-for="field of params">
+        <strong>{{ field.parameter }}:</strong> 
+        <span class="params"> {{ field.value }} </span>
+      </div>
+      <div v-for="p of sizeParams">
+        <strong>{{ p.param_name }}:</strong> 
+        <span class="params">{{ p.value }}</span> 
+      </div>
+
       <input type="button" class="button" value="редактировать" @click="edit"/>
       <input type="button" class="button" value="проверено" @click="checked"/>
       <input type="button" class="button" value="отгрузить" v-if="!isOut" @click="outload"/>
@@ -35,11 +37,46 @@ export default {
     data() {
         return {
             isOut: !this.$router.params.props.date_out ? false : true,
-            timeMessage: this.timeChecker()
+            timeMessage: this.timeChecker(),
+            sizeParams: this.$router.params.props.params_value,
+            params: this.paramsToArray(this.$router.params.props),
+            object: this.$router.params.props,
         }
     },
 
     methods: {
+        paramsRecognizer(key) {
+          switch (key) {
+            case "barcode": return "штрих-код";
+              break;
+            case "date_in": return "дата загрузки";
+              break;
+            case "date_out": return "дата выгрузки";
+              break;
+            case "date_revert": return "дата возврата";
+              break;
+            case "date_check": return "дата проверки";
+              break;
+            case "classifier": return "классификатор";
+              break;
+            case "mass": return "масса";
+              break;
+            default: return false;
+              break;
+          }
+        },
+
+        paramsToArray(obj) {
+          const arr = [];
+          for (const key in obj) {
+            const screenKey = this.paramsRecognizer(key);
+            if (screenKey) {
+              arr.push({parameter: screenKey, value: obj[key]});
+            }
+          }
+          return arr;
+        },
+
         edit() {
             const editor = document.querySelector('.editor');
             const current = document.querySelector('.barInfo');
@@ -91,13 +128,14 @@ export default {
         checked() {
             const nowDate = this.timeConverter('sql');
             console.log(nowDate);
+            
             axios.patch(`http://test.i-mex.pro/api/barcodes/${this.$router.params.props.barcode}`, {
               date_check: nowDate
             })
-            .then(response => {
-                console.log(`ok`);
-            })
-            .catch(err => console.log(error));
+            .then(response => console.log(`ok`))
+            .catch(error => {
+              if (error.response.status === 404) console.log('такой штрих-код не найден в системе');
+            });
         },
 
         outload() {
@@ -106,10 +144,10 @@ export default {
             axios.patch(`http://test.i-mex.pro/api/barcodes/${this.$router.params.props.barcode}`, {
               date_out: nowDate
             })
-            .then(response => {
-                console.log('ok');
-            })
-            .catch(err => console.log(error));
+            .then(response => console.log(`ok`))
+            .catch(error => {
+              if (error.response.status === 404) console.log('такой штрих-код не найден в системе');
+            });
         },
 
         revert() {
@@ -118,16 +156,17 @@ export default {
             axios.patch(`http://test.i-mex.pro/api/barcodes/${this.$router.params.props.barcode}`, {
               date_revert: nowDate
             })
-            .then(response => {
-                console.log('ok');
-            })
-            .catch(err => console.log(error));
+            .then(response => console.log(`ok`))
+            .catch(error => {
+              if (error.response.status === 404) console.log('такой штрих-код не найден в системе');
+            });
         }
     },
 
     mounted() {
-        if (!this.$router.params.props.date_in) {
+        if (!this.object.date_in) {
           this.edit();
+          console.log(this.$router.params.props);
         }
     }
 
@@ -152,12 +191,7 @@ export default {
   color: red;
 }
 
-.container h6 {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  cursor: default;
-}
+ 
 
 .container input {
   margin: 0 0;
@@ -167,25 +201,33 @@ export default {
   margin: 0.15em 0;
 }
 
+.barInfo div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: default;
+}
+
 .container span {
   margin: 0.15em 0;
   font-weight: lighter;
-  cursor: pointer;
+  cursor: default;
 }
 
 .button {
   font-weight: 100;
-  font-size: 18px;
+  font-size: 21px;
   color: #F1F1F1;
   word-spacing: 5px;
   padding: 0.18em 0.2em;
-  order: 2;
+   
   background-color: #35495e;
   max-width: 41%;
   min-width: 41%;
-  border-radius: 5%;
+  border-radius: 4%;
   outline: none;
   cursor: pointer;
+  margin-bottom: 15px;
 }
 
 .notification {
@@ -195,10 +237,6 @@ export default {
   position: fixed;
   text-align: center;
   
-}
-
-.notification h4 {
-  color: white;
 }
 
 .message {
