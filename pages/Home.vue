@@ -1,12 +1,5 @@
 <template>
   <div>
-
-    <!-- <div class="notification" hidden>
-      <h4>О Т Г Р У Ж Е Н О</h4>
-      <span class="timing" hidden>Более пяти часов назад...</span>
-      <button class="button" @click="$router.go()">Вернуть</button>
-      <button class="button" @click="$router.go()">Отмена</button>
-    </div> -->
  
     <BarInfo />
      
